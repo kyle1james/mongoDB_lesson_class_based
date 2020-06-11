@@ -1,3 +1,4 @@
+
 const { MongoClient } = require('mongodb');
 
 class MongoDBInstance {
@@ -10,9 +11,9 @@ class MongoDBInstance {
     const client = await MongoClient.connect(this.uri, { useUnifiedTopology: true })
     const db = client.db('myApp');
     const userInfo = db.collection('locationNotes');
-    console.log("connected to db")
     this.userInfo = userInfo;
     this.db = db;
+    console.log('connected to db')
   }
 }
 module.exports = new MongoDBInstance();

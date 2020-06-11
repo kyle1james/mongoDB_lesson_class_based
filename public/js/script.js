@@ -3,7 +3,7 @@ const cordObj = {};
 // locate lat/lon
 (function locationAPIS() {
   if ('geolocation' in navigator) {
-    document.getElementById('myH1').textContent = 'Allow Geolocation to run site';
+    document.getElementById('myH1').textContent = 'Gelocation Notes';
     // call api
     navigator.geolocation.getCurrentPosition(success);
   } else {
@@ -12,9 +12,9 @@ const cordObj = {};
 }());
 
 // success calls map init
-function success(pos) {
-  cordObj.lat = pos.coords.latitude.toFixed(4);
-  cordObj.lon = pos.coords.longitude.toFixed(4);
+async function success(pos) {
+  cordObj.lat = await pos.coords.latitude.toFixed(4);
+  cordObj.lon = await pos.coords.longitude.toFixed(4);
   mapInit();
 }
 // create map and show all markers in db
@@ -22,14 +22,12 @@ async function mapInit() {
   // add locate user funcntion geolocation
   const mymap = L.map('map').setView([cordObj.lat, cordObj.lon], 12);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(mymap);
   // show all current markers
   const url = '/show';
   const data = await fetch(url);
   const locationData = await data.json();
-  console.log(locationData);
   // add markers
   for (let idx = 0; idx < locationData.length; idx++) {
     const m = L.marker([parseFloat(locationData[idx].lat), parseFloat(locationData[idx].lon)]).addTo(mymap).bindPopup(locationData[idx].note).openPopup();

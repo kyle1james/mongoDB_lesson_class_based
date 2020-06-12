@@ -55,4 +55,4 @@ app.post('/update', (req, res) => {
 });
 
 // listen on port 4000
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
+app.listen(process.env.PORT || 4000)

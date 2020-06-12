@@ -9,7 +9,7 @@ require('dotenv').config();
 const { ObjectId } = require('mongodb');
 // bring in db and initialize
 const database = require('./mongoObj');
-database.init()
+database.init();
 // read forms sent
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
@@ -22,18 +22,21 @@ app.get('/', async (req, res) => {
   });
 
 // showing data
+// GET/ READ
 app.get('/show', async (req, res) =>{
-    const data = await database.userInfo.find().toArray();
-    res.json(data);
+  const data = await database.userInfo.find().toArray();
+  res.json(data);
 });
 
 // adding data
-app.get('/location/:lat/:lon/:note', (req, res) => {
-    const {lat, lon, note} = req.params;
-    database.userInfo.insertOne({lat, lon, note});
-    console.log('add info')
-    res.redirect('/');
-});
+app.post('/addUserInfo', (req, res) =>{
+  // unpack the body of the req
+  const {lat, lon, note} = req.body;
+  console.log(lat);
+  // send data to the collection locationNotes
+  database.userInfo.insertOne({lat, lon, note});
+  console.log('pat on the back')
+})
 
 // updating data
 

@@ -1,6 +1,7 @@
 const cordObj = {};
 
 // locate lat/lon
+// calls success()
 (function locationAPIS() {
   if ('geolocation' in navigator) {
     document.getElementById('myH1').textContent = 'Gelocation Notes';
@@ -29,45 +30,53 @@ async function mapInit() {
   const data = await fetch(url);
   const locationData = await data.json();
   // add markers
-  for (let idx = 0; idx < locationData.length; idx++) {
-    const m = L.marker([parseFloat(locationData[idx].lat), parseFloat(locationData[idx].lon)]).addTo(mymap).bindPopup(locationData[idx].note).openPopup();
-    m._icon.id = locationData[idx]._id;
+  for(let i = 0; i < locationData.length; i++){
+    if (locationData[i].lat != null){
+      const m = L.marker([parseFloat(locationData[i].lat), parseFloat(locationData[i].lon)]).addTo(mymap).bindPopup(locationData[i].note).openPopup();
+      m._icon.id = locationData[i]._id;
+    }
   }
   mymap.setView([cordObj.lat, cordObj.lon], 12);
+
 }
 
 // add data to db
+// our function connected to our eventlistner
 async function addData() {
-    const note = document.getElementById('note').value;
-
-    if (cordObj.lastClicked != null){
-        console.log(cordObj.lastClicked);
-        cordObj.note = note;
-        const id = cordObj.lastClicked;
-        const userInfo = {id, note};
-        console.log(userInfo)
-
-        const options = {
-            method: 'POST',
-            body: JSON.stringify(userInfo),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          };
-        const a = await fetch('/update', options);
+  const note = document.getElementById('note').value;
+  cordObj.note = note;
+  if (cordObj.lastClicked != null){
+    console.log(cordObj.lastClicked);
+    const id = cordObj.lastClicked;
+    const userInfo = {id, note};
+    const options = {
+          method: 'POST',
+          body: JSON.stringify(userInfo),
+          headers: {
+                'Content-Type': 'application/json',
+                },
+            };
+    const a = await fetch('/update', options);
 
     }else{
-        console.log('add data clicked')
-        console.log(cordObj)
-        cordObj.note = note;
-        const url = `location/${cordObj.lat}/${cordObj.lon}/${cordObj.note}`;
-        const resp = await fetch(url);
-        console.log('add data done');
+    // grab user info
+    console.log('add data clicked')
+    // add user info to our obj
+    cordObj.note = note;
+    // we are going to send information through the body so we need
+    // to define a few options, what http method, what's in the body, and headers.
+    const options = {
+        method: 'POST',
+        body: JSON.stringify(cordObj),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+     }
+      // we are making a call to our own server!
+      await fetch('/addUserInfo', options);
+      console.log('add data done')
     }
-};
-
-// edit data
-
+}
 
 // add path to edit/del
 document.body.addEventListener('click', (evt) => {

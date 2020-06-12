@@ -1,6 +1,7 @@
-
+// fancy way to import a file
 const { MongoClient } = require('mongodb');
 
+// connection to mongodb
 class MongoDBInstance {
   constructor(){
     const mongopass = process.env.MONGOPASS;
@@ -16,4 +17,5 @@ class MongoDBInstance {
     console.log('connected to db')
   }
 }
+// exporting it so we can access it around our app
 module.exports = new MongoDBInstance();
